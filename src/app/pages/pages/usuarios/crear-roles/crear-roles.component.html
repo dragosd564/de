@@ -1,0 +1,60 @@
+<form [formGroup]="form">
+  <div class="flex items-center" mat-dialog-title>
+    <h2 class="headline m-0 flex-auto">
+      Nuevo Rol
+    </h2>
+
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+      <mat-icon svgIcon="mat:close"></mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="text-border"></mat-divider>
+
+  <mat-dialog-content class="flex flex-col">
+    <div class="flex flex-col sm:flex-row">
+
+      <mat-form-field class="flex-auto">
+        <mat-label>
+          Nombre del Rol
+        </mat-label>
+        <input cdkFocusInitial formControlName="descripcion" matInput />
+
+        <mat-icon matIconPrefix>badge</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field class="sm:ml-6 flex-auto">
+        <mat-label>
+          Codigo Referencia (opcional)
+        </mat-label>
+        <input formControlName="codigo" matInput />
+
+        <mat-icon matIconPrefix>password_2</mat-icon>
+      </mat-form-field>
+
+    </div>
+    <mat-form-field class="flex-auto">
+      <mat-label>
+        Tipo de Perfil
+      </mat-label>
+      <mat-select formControlName="tipoPerfil" required>
+        <mat-option *ngFor="let perfil of tiposPerfiles" [value]="perfil['descripcion']"
+          (click)="seleccionarTipoPerfil(perfil)">
+          {{ perfil['descripcion'] }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Salir</button>
+    <button color="primary" mat-flat-button type="submit" [disabled]="!form.valid || procesando"
+      (click)="rol ?actualizar():crear()">
+      {{ procesando ? 'Procesando...' : rol ? 'Actualizar' : 'Crear' }}
+    </button>
+
+    <!-- <button *ngIf="isUpdateMode()" color="primary" mat-flat-button type="submit">
+      Update Customer
+    </button> -->
+  </mat-dialog-actions>
+</form>

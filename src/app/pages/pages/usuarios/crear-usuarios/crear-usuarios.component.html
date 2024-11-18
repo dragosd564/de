@@ -1,0 +1,126 @@
+<form (ngSubmit)="save()" [formGroup]="form">
+  <div class="flex items-center" mat-dialog-title>
+    <!-- <img *ngIf="form.controls.foto.value" [src]="form.controls.foto.value" class="avatar mr-5" /> -->
+    <mat-icon class="avatar mr-5 logo">person</mat-icon>
+
+    <h2 *ngIf="form.controls.nombre.value || form.controls.apellido.value" class="headline m-0 flex-auto">
+      {{ form.controls.nombre.value + " " + form.controls.apellido.value }}
+    </h2>
+    <h2 *ngIf="!form.controls.nombre.value && !form.controls.apellido.value" class="headline m-0 flex-auto">
+      Nuevo Usuario
+    </h2>
+
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+      <mat-icon svgIcon="mat:close"></mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="text-border"></mat-divider>
+
+  <mat-dialog-content class="flex flex-col">
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>
+          Nombres
+        </mat-label>
+        <input cdkFocusInitial formControlName="nombre" matInput />
+
+        <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+      </mat-form-field>
+
+      <mat-form-field class="sm:ml-6 flex-auto">
+        <mat-label>
+          Apellidos
+        </mat-label>
+        <input formControlName="apellido" matInput />
+
+        <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="flex-auto">
+      <mat-label>
+        Email / Inicio de sesión
+      </mat-label>
+      <input formControlName="correo" matInput />
+
+      <mat-icon matIconPrefix svgIcon="mat:email"></mat-icon>
+    </mat-form-field>
+
+    <mat-form-field class="flex-auto">
+      <mat-label>
+        Rol
+      </mat-label>
+      <mat-select formControlName="role" required>
+        <mat-option *ngFor="let rol of roles" [value]="rol['descripcion']" (click)="selectRol(rol)">
+          {{ rol['descripcion'] }}
+        </mat-option>
+      </mat-select>
+      <mat-icon matIconPrefix>
+        badge
+      </mat-icon>
+    </mat-form-field>
+
+    <mat-form-field class="flex-auto" *ngIf="mode != 'update'">
+      <mat-label>
+        Contraseña
+      </mat-label>
+      <input formControlName="clave" matInput [type]="showPassword ? 'text' : 'password'" />
+      <mat-icon matIconPrefix svgIcon="mat:lock"></mat-icon>
+      <mat-icon matIconSuffix (click)="togglePasswordVisibility()">
+        {{ showPassword ? 'visibility' : 'visibility_off' }}
+      </mat-icon>
+
+    </mat-form-field>
+
+    <div class="space-y-2" *ngIf="mode != 'update'">
+      <div class="flex justify-between text-sm">
+        <span>Fortaleza de la contraseña:</span>
+        <span
+          [ngClass]="{'text-red-500': getStrengthText() === 'Débil', 'text-yellow-500': getStrengthText() === 'Moderada', 'text-green-500': getStrengthText() === 'Fuerte'}">
+          {{ getStrengthText() }}
+        </span>
+      </div>
+      <div class="h-2 bg-gray-200 rounded-full">
+        <div class="h-full rounded-full transition-all duration-300" [ngClass]="getStrengthColor()"
+          [style.width.%]="(getPasswordStrength() / passwordRules.length) * 100"></div>
+      </div>
+    </div>
+
+    <div class="space-y-2" *ngIf="mode != 'update'">
+      <span class="block text-sm font-medium text-gray-700 pt-5">Requisitos de la contraseña:</span>
+      <ul class="space-y-1 text-sm requisitos-grid">
+        <li *ngFor="let rule of passwordRules" class="flex items-center">
+          <svg *ngIf="isRuleMet(rule)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-green-500"
+            viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clip-rule="evenodd" />
+          </svg>
+          <svg *ngIf="!isRuleMet(rule)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-red-500"
+            viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd" />
+          </svg>
+          <span [ngClass]="{'text-green-700': isRuleMet(rule), 'text-gray-600': !isRuleMet(rule)}">
+            {{ rule.label }}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button *ngIf="isCreateMode()"
+      [disabled]="form.invalid || getPasswordStrength() < passwordRules.length || isloading" color="primary"
+      mat-flat-button type="submit">
+      {{isloading ? 'Creando...' : 'Crear'}}
+    </button>
+    <button *ngIf="isUpdateMode()" color="primary" mat-flat-button type="submit" [disabled]="isloading">
+      {{isloading ? 'Actualizando...' : 'Actualizar'}}
+    </button>
+  </mat-dialog-actions>
+</form>
