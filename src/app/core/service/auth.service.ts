@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
+import { AlertasService } from './alertas.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private alertasService: AlertasService
   ) { }
 
   login(appData: any): Observable<any> {
@@ -33,26 +35,22 @@ export class AuthService {
   }
 
   logout() {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: "Estas a punto de cerrar sesión",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, cerrar sesión'
-    }).then((result) => {
+    this.alertasService.alertaConfirmacion('Cerrar sesión', '¿Estás seguro de cerrar sesión?').then((result) => {
       if (result.isConfirmed) {
-        Swal.fire(
-          'Sesión cerrada',
-          'Has cerrado sesión correctamente',
-          'success'
-        )
-        localStorage.removeItem('token');
+        this.alertasService.alertaDinamica('success', 'Sesión cerrada', 'Tu sesión ha sido cerrada');
+        localStorage.clear();
         this.router.navigate(['/login']);
       }
     })
     return;
+  }
+
+  authEmail(): Observable<any> {
+    return this.http.post(this.url + '/users/verify', {});
+  }
+
+  validarCodigo(codigo: any): Observable<any> {
+    return this.http.get(this.url + `/users/verify/${codigo}`);
   }
 
   userProfile(): Observable<any> {

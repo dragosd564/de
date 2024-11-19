@@ -16,11 +16,12 @@
           <input id="digit3" type="text" formControlName="digit3" maxlength="1" (input)="onInput($event, 3)" />
           <input id="digit4" type="text" formControlName="digit4" maxlength="1" (input)="onInput($event, 4)" />
           <input id="digit5" type="text" formControlName="digit5" maxlength="1" (input)="onInput($event, 5)" />
-          <input id="digit6" type="text" formControlName="digit6" maxlength="1" (input)="onInput($event, 6)" />
+          <!-- <input id="digit6" type="text" formControlName="digit6" maxlength="1" (input)="onInput($event, 6)" /> -->
         </div>
-        <button mat-raised-button color="primary" type="submit" class="m-4" [disabled]="verificationForm.invalid">
+        <button mat-raised-button color="primary" type="submit" class="m-4"
+          [disabled]="verificationForm.invalid || isLoading">
           <mat-icon>send</mat-icon>
-          Verificar codigo
+          {{isLoading ? 'Verificando...' : 'Verificar'}}
         </button>
         <button mat-button color="secondary" (click)="handleResendCode()" [disabled]="resendTimer > 0">
           <mat-icon>refresh</mat-icon>

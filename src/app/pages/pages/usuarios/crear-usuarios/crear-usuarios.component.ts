@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Usuario } from 'src/app/core/interfaces/customer.model';
+import { AlertasService } from 'src/app/core/service/alertas.service';
 import { UsuariosService } from 'src/app/core/service/usuarios.service';
 import { AngularMaterialModule } from 'src/app/material.module';
 import Swal from 'sweetalert2';
@@ -52,7 +53,8 @@ export class CrearUsuariosComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public usuario: any | undefined,
     private dialogRef: MatDialogRef<CrearUsuariosComponent>,
     private fb: FormBuilder,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private alertasService: AlertasService
   ) { }
 
   ngOnInit() {
@@ -122,21 +124,11 @@ export class CrearUsuariosComponent implements OnInit {
       }
       this.usuariosService.crearUsuario(usuario).subscribe((data: any) => {
         this.isloading = false;
-        Swal.fire({
-          icon: 'success',
-          title: 'Usuario creado',
-          confirmButtonColor: '#f27474',
-          text: 'El usuario se ha creado correctamente'
-        });
+        this.alertasService.alertaExito('Usuario creado', 'El usuario se ha creado correctamente');
         this.dialogRef.close(data);
       }, (error) => {
         this.isloading = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          confirmButtonColor: '#f27474',
-          text: error.error.message
-        });
+        this.alertasService.alertaError('Error', error.error.message);
       });
     }
   }
@@ -153,21 +145,11 @@ export class CrearUsuariosComponent implements OnInit {
     }
     this.usuariosService.updateUsuario(this.usuario.idUsuario, usuario).subscribe((data: any) => {
       this.isloading = false;
-      Swal.fire({
-        icon: 'success',
-        title: 'Usuario actualizado',
-        confirmButtonColor: '#f27474',
-        text: 'El usuario se ha actualizado correctamente'
-      });
+      this.alertasService.alertaExito('Usuario actualizado', 'El usuario se ha actualizado correctamente');
       this.dialogRef.close(data);
     }, (error) => {
       this.isloading = false;
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        confirmButtonColor: '#f27474',
-        text: error.error.message
-      });
+      this.alertasService.alertaError('Error', error.error.message);
     });
   }
 

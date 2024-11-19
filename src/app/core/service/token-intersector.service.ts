@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, Observable, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
+import { AlertasService } from './alertas.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenIntersectorService implements HttpInterceptor {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private alertaService: AlertasService) { }
 
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -23,12 +24,7 @@ export class TokenIntersectorService implements HttpInterceptor {
       return next.handle(cloned).pipe(
         catchError((error) => {
           if (error.status === 401) {
-            Swal.fire({
-              title: 'Error',
-              text: 'Tu sesión ha expirado',
-              icon: 'error',
-              confirmButtonText: 'Ok'
-            }).then((result) => {
+            this.alertaService.alertaInformacion('Tu sesión ha expirado', 'vuelve a iniciar sesión').then((result) => {
               if (result.isConfirmed) {
                 localStorage.clear();
                 this.router.navigate(['/login']);

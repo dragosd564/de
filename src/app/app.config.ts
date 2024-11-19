@@ -71,7 +71,7 @@ export const appConfig: ApplicationConfig = {
         }
       ]
     }),
-    provideNavigation(),
+    // provideNavigation(),
     provideIcons(),
     provideLuxon(),
     provideQuillConfig({

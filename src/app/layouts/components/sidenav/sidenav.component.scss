@@ -170,3 +170,21 @@
 .vex-sidenav-search__keybind {
   @apply bg-white/10 rounded text-2xs px-2 py-1 font-semibold transition duration-300 ease-out;
 }
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.cargando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+.circular-progress {
+  width: 4rem !important;
+  height: 100px !important;
+}

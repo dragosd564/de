@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { AuthService } from 'src/app/core/service/auth.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'vex-sidenav',
@@ -30,10 +31,13 @@ import { AuthService } from 'src/app/core/service/auth.service';
     VexScrollbarComponent,
     NgFor,
     SidenavItemComponent,
-    AsyncPipe
+    AsyncPipe,
+    MatProgressSpinnerModule
   ]
 })
 export class SidenavComponent implements OnInit {
+  isLoading = false;
+
   @Input() collapsed: boolean = false;
   collapsedOpen$ = this.layoutService.sidenavCollapsedOpen$;
   title$ = this.configService.config$.pipe(
@@ -56,7 +60,12 @@ export class SidenavComponent implements OnInit {
 
   items$: Observable<NavigationItem[]> = this.navigationService.items$;
 
+  isloaded$: Observable<boolean> = this.navigationService.isloaded$;
+
+  userInfo$: Observable<any> = this.navigationService.userInfo$;
+
   datosUsuario: any;
+  lengthMenu: number = 0;
 
   constructor(
     private navigationService: NavigationService,
@@ -68,7 +77,14 @@ export class SidenavComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getPerfilUsuario();
+    this.userInfo$.subscribe((usuario) => {
+      this.datosUsuario = usuario;
+    })
+    this.isloaded$.subscribe(isLoaded => this.isLoading = isLoaded);
+    this.items$.subscribe((items) => {
+      this.lengthMenu = items.length;
+    });
+    this.navigationService.actualizar();
   }
 
   collapseOpenSidenav() {

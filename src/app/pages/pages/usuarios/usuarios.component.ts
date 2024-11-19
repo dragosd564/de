@@ -18,6 +18,7 @@ import { TablaDinamicaComponent } from "../../../core/components/tabla-dinamica/
 import { CrearRolesComponent } from './crear-roles/crear-roles.component';
 import { UsuariosService } from 'src/app/core/service/usuarios.service';
 import Swal from 'sweetalert2';
+import { AlertasService } from 'src/app/core/service/alertas.service';
 
 @Component({
   selector: 'app-usuarios',
@@ -81,7 +82,11 @@ export class UsuariosComponent implements OnInit {
 
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  constructor(private dialog: MatDialog, private usuarioService: UsuariosService) { }
+  constructor(
+    private dialog: MatDialog,
+    private usuarioService: UsuariosService,
+    private alertaService: AlertasService
+  ) { }
 
 
   getData() {
@@ -143,40 +148,25 @@ export class UsuariosComponent implements OnInit {
   }
 
   eliminarUsuario(customer: any) {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: "¡No podrás revertir esto!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: '¡Sí, bórralo!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.usuarioService.deleteUsuario(customer.idUsuario).subscribe((data: any) => {
-          if (data.success) {
-            Swal.fire(
-              '¡Eliminado!',
-              'El usuario ha sido eliminado.',
-              'success'
-            );
-            this.getUsuarios();
-          }
 
-        }, (error) => {
-          Swal.fire(
-            'Error',
-            'Ocurrió un error al eliminar el usuario',
-            'error'
-          );
-        });
-      }
-    })
+    this.alertaService.alertaConfirmacion('¿Estás seguro?', '¡No podrás revertir esto!')
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.usuarioService.deleteUsuario(customer.idUsuario).subscribe((data: any) => {
+            if (data.success) {
+              this.alertaService.alertaExito('¡Eliminado!', 'El usuario ha sido eliminado.');
+              this.getUsuarios();
+            }
+
+          }, (error) => {
+            this.alertaService.alertaError('Error', 'Ha ocurrido un error al eliminar el usuario.');
+
+          });
+        }
+      })
   }
 
   recibeData(data: any) {
-    console.log('data', data);
-
     switch (data.accion) {
       case 'editar':
         this.editarUsuario(data);

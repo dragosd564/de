@@ -12,6 +12,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
+import { AlertasService } from 'src/app/core/service/alertas.service';
+import { AuthService } from 'src/app/core/service/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-codigo_verificacion',
@@ -44,7 +47,7 @@ export class Codigo_verificacionComponent implements OnInit {
     digit3: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]$/)]],
     digit4: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]$/)]],
     digit5: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]$/)]],
-    digit6: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]$/)]]
+    // digit6: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]$/)]]
   });
 
   resendTimer = 0;
@@ -54,6 +57,8 @@ export class Codigo_verificacionComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
+    private authService: AuthService,
+    private alertaService: AlertasService
   ) { }
 
   ngOnInit() {
@@ -67,22 +72,27 @@ export class Codigo_verificacionComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  async handleVerify() {
+  async handleVerify(codigo: any) {
     if (this.verificationForm.valid) {
       this.isLoading = true;
       this.error = '';
 
       try {
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // Simulated successful verification
-        this.isLoading = false;
-        alert('Login successful!');
+        await this.authService.validarCodigo(codigo).subscribe((res: any) => {
+          this.isLoading = false;
+          if (res.success) {
+            this.alertaService.alertaExito('Verificado', 'El código se verificó correctamente');
+            this.router.navigate(['/home']);
+          }
+        }, (err: any) => {
+          this.isLoading = false;
+          this.alertaService.alertaError('Error', 'Código de verificación incorrecto');
+        });
         // In a real application, you would verify the code and log the user in here
       } catch (err) {
         this.isLoading = false;
-        this.error = 'Invalid verification code. Please try again.';
+        this.alertaService.alertaError('Error', 'Código de verificación incorrecto');
       }
     }
   }
@@ -106,15 +116,19 @@ export class Codigo_verificacionComponent implements OnInit {
 
       try {
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        this.isLoading = false;
-        alert('Verification code resent to your email');
+        await this.authService.authEmail().subscribe((res: any) => {
+          this.isLoading = false;
+          if (res.success) {
+            this.alertaService.alertaExito('Código reenviado', 'Se ha reenviado el código de verificación');
+          }
+        }, (err: any) => {
+          this.isLoading = false;
+          this.alertaService.alertaError('Error', 'No se pudo reenviar el código de verificación');
+        });
         this.startResendTimer();
         // In a real application, you would resend the verification code here
       } catch (err) {
         this.isLoading = false;
-        this.error = 'Failed to resend verification code. Please try again.';
       }
     }
   }
@@ -132,10 +146,9 @@ export class Codigo_verificacionComponent implements OnInit {
   onSubmit() {
     if (this.verificationForm.valid) {
       const code = Object.values(this.verificationForm.value).join('');
-      console.log('Código ingresado:', code);
-      this.router.navigate(['/home']);
+      this.handleVerify(code);
     } else {
-      console.log('Formulario no válido');
+      this.alertaService.alertaAdvertencia('Advertencia', 'Por favor, complete el código de verificación');
     }
   }
 }

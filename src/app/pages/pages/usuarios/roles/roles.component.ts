@@ -10,6 +10,7 @@ import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { scaleIn400ms } from '@vex/animations/scale-in.animation';
 import { stagger40ms } from '@vex/animations/stagger.animation';
 import Swal from 'sweetalert2';
+import { AlertasService } from 'src/app/core/service/alertas.service';
 
 @Component({
   selector: 'vex-roles',
@@ -33,13 +34,7 @@ export class RolesComponent implements OnInit {
       visible: true,
       cssClasses: ['font-medium']
     },
-    {
-      label: 'Tiene acceso',
-      property: 'accesoTotal',
-      type: 'boolean',
-      visible: true,
-      cssClasses: ['text-secondary', 'font-medium']
-    },
+
     {
       label: 'Opciones',
       property: 'menu',
@@ -49,7 +44,8 @@ export class RolesComponent implements OnInit {
   ];
 
   constructor(private dialog: MatDialog,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private alertaService: AlertasService
   ) { }
 
 
@@ -89,34 +85,23 @@ export class RolesComponent implements OnInit {
   }
 
   eliminarRol(role: any) {
-    Swal.fire({
-      title: '¿Está seguro de eliminar el rol?',
-      showCancelButton: true,
-      confirmButtonText: `Aceptar`,
-      cancelButtonText: `Cancelar`,
-      icon: 'question',
-      iconColor: '#3085d6',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.usuariosService.deleteRol(role.idPerfil).subscribe((data: any) => {
-          if (data.success) {
-            this.roles = [];
-            this.usuariosService.obtenerRoles().subscribe((data: any) => {
-              this.roles = data;
-            });
-          }
-        });
-      }
-    });
+    this.alertaService.alertaConfirmacion('¿Está seguro de eliminar el rol?', 'warning')
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.usuariosService.deleteRol(role.idPerfil).subscribe((data: any) => {
+            if (data.success) {
+              this.roles = [];
+              this.usuariosService.obtenerRoles().subscribe((data: any) => {
+                this.roles = data;
+              });
+            }
+          });
+        }
+      });
 
   }
 
   recibeData(data: any) {
-    console.log('data', data);
-
     switch (data.accion) {
       case 'editar':
         this.editarRol(data);

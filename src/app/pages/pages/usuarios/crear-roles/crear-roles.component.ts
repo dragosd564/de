@@ -5,6 +5,7 @@ import { AngularMaterialModule } from 'src/app/material.module';
 import { CrearUsuariosComponent } from '../crear-usuarios/crear-usuarios.component';
 import { UsuariosService } from 'src/app/core/service/usuarios.service';
 import Swal from 'sweetalert2';
+import { AlertasService } from 'src/app/core/service/alertas.service';
 
 @Component({
   selector: 'vex-crear-roles',
@@ -24,7 +25,7 @@ export class CrearRolesComponent implements OnInit, OnChanges {
       '',
     ],
     tipoPerfil: [''],
-    idTipoPerfil: [0],
+    idTipoPerfil: [2],
     idProducto: [1],
     idAplicacion: [1],
   });
@@ -35,6 +36,7 @@ export class CrearRolesComponent implements OnInit, OnChanges {
     @Inject(MAT_DIALOG_DATA) public rol: any | undefined,
     private dialogRef: MatDialogRef<CrearUsuariosComponent>,
     private usuariosService: UsuariosService,
+    private alertasService: AlertasService,
     private fb: FormBuilder) {
     console.log(this.form.value);
 
@@ -52,13 +54,10 @@ export class CrearRolesComponent implements OnInit, OnChanges {
       this.form.patchValue({
         codigo: this.rol.codigo,
         descripcion: this.rol.descripcion,
-        idTipoPerfil: this.rol.tipoPerfil.idTipoPerfil,
+        idTipoPerfil: 2,
         tipoPerfil: this.rol.tipoPerfil.descripcion
       });
     }
-    await this.usuariosService.obtenerTiposPerfiles().subscribe((data: any) => {
-      this.tiposPerfiles = data;
-    });
   }
 
   async crear() {
@@ -67,24 +66,12 @@ export class CrearRolesComponent implements OnInit, OnChanges {
     await this.usuariosService.crearRol(this.form.value).subscribe((data: any) => {
       this.procesando = false;
       if (data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: '',
-          text: 'Rol Creado con éxito',
-          showConfirmButton: false,
-          allowEscapeKey: false,
-          allowOutsideClick: false,
-          timer: 1500
-        });
+        this.alertasService.alertaExito('', 'Rol Creado con éxito');
         this.dialogRef.close(data);
       }
     }, (error) => {
       this.procesando = false;
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: error.error.message,
-      });
+      this.alertasService.alertaError('Oops...', 'Hubo un error al crear el rol' + error.error.message);
     });
   }
   async actualizar() {
@@ -102,28 +89,16 @@ export class CrearRolesComponent implements OnInit, OnChanges {
     await this.usuariosService.updateRol(this.rol.idPerfil, actualizarRol).subscribe((data: any) => {
       this.procesando = false;
       if (data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Rol actualizado',
-          showConfirmButton: false,
-          allowEscapeKey: false,
-          allowOutsideClick: false,
-          timer: 1500
-        });
+        this.alertasService.alertaExito('', 'Rol Actualizado con éxito');
         this.dialogRef.close(data);
       }
     }, (error) => {
       this.procesando = false;
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Hubo un error al actualizar el rol',
-      });
+      this.alertasService.alertaError('Oops...', 'Hubo un error al actualizar el rol' + error.error.message);
     });
   }
 
   seleccionarTipoPerfil(tipoPerfil: any) {
-    console.log(tipoPerfil);
 
     this.form.patchValue({ idTipoPerfil: tipoPerfil.idTipoPerfil });
   }

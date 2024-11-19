@@ -14,12 +14,16 @@ import { NavigationLoaderService } from './navigation-loader.service';
 export class NavigationService {
   items$: Observable<NavigationItem[]> = this.navigationLoaderService.items$;
 
+  isloaded$: Observable<boolean> = this.navigationLoaderService.isLoaded$;
+
+  userInfo$: Observable<any> = this.navigationLoaderService.userInfo;
+
   private _openChangeSubject = new Subject<NavigationDropdown>();
   openChange$ = this._openChangeSubject.asObservable();
 
   constructor(
     private readonly navigationLoaderService: NavigationLoaderService
-  ) {}
+  ) { }
 
   triggerOpenChange(item: NavigationDropdown) {
     this._openChangeSubject.next(item);
@@ -35,5 +39,9 @@ export class NavigationService {
 
   isSubheading(item: NavigationItem): item is NavigationSubheading {
     return item.type === 'subheading';
+  }
+
+  actualizar() {
+    this.navigationLoaderService.loadNavigation();
   }
 }

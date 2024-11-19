@@ -17,6 +17,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from 'src/app/core/service/auth.service';
+import Swal from 'sweetalert2';
+import { AlertasService } from 'src/app/core/service/alertas.service';
 
 @Component({
   selector: 'vex-login',
@@ -62,7 +64,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private snackbar: MatSnackBar,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertasService: AlertasService
   ) { }
 
   async handleLogin() {
@@ -76,7 +79,9 @@ export class LoginComponent {
           if (res.success) {
             this.isLoading = false;
             localStorage.setItem('token', res.result.token);
-            this.router.navigate(['/codigo_verificacion']);
+            this.mandarCodigo();
+
+
           } else {
             this.isLoading = false;
             this.error = res.message;
@@ -90,6 +95,20 @@ export class LoginComponent {
         this.error = 'Error al iniciar sesión';
       }
     }
+  }
+
+  mandarCodigo() {
+    this.isLoading = true;
+    this.authService.authEmail().subscribe((res) => {
+      this.isLoading = false;
+      if (res.success) {
+        this.alertasService.alertaExito('Código enviado', 'Hemos enviado un código de verificación a tu correo electrónico');
+        this.router.navigate(['/codigo_verificacion']);
+      }
+    }, (error) => {
+      this.isLoading = false;
+      this.alertasService.alertaError('Error', 'Error al enviar el código de verificación');
+    });
   }
 
 
