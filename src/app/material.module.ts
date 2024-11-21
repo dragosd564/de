@@ -1,4 +1,4 @@
-import { NgIf, NgFor, NgClass, AsyncPipe } from "@angular/common";
+import { NgIf, NgFor, NgClass, AsyncPipe, CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -33,6 +33,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 @NgModule({
   imports: [
     ReactiveFormsModule,
+    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -64,10 +65,12 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     ContactsDataTableComponent,
     AsyncPipe,
     VexScrollbarComponent,
-    MatProgressBarModule
+    MatProgressBarModule,
+
   ],
   exports: [
     ReactiveFormsModule,
+    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

@@ -1,0 +1,138 @@
+<form [formGroup]="form" class="w-full">
+  <div class="flex items-center" mat-dialog-title>
+    <h2 class="headline m-0 flex-auto">
+      {{this.opcionesPermisos['esEditar'] ? 'Editar Opciones y permisos' : 'Crear Opciones y permisos'}}
+    </h2>
+
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+      <mat-icon svgIcon="mat:close"></mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="text-border"></mat-divider>
+
+  <mat-dialog-content class="flex flex-col" *ngIf="!this.opcionesPermisos['esEditar']">
+    <mat-form-field class="flex-auto">
+      <mat-label>
+        Modulos
+      </mat-label>
+      <mat-select formControlName="modulos" required>
+        <mat-option *ngFor="let modulo of modulos" [value]="modulo['descripcion']" (click)="selectModulo(modulo)">
+          {{ modulo['descripcion'] }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="flex-auto">
+      <mat-label>
+        Opciones
+      </mat-label>
+      <mat-select formControlName="opciones" required>
+        <mat-option *ngFor="let opt of opciones" [value]="opt['descripcion']" (click)="selectOpt(opt)">
+          {{ opt['descripcion'] }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="flex-auto">
+      <mat-label>
+        Permisos
+      </mat-label>
+      <mat-select formControlName="permisos" required>
+        <mat-option *ngFor="let permiso of permisos" [value]="permiso">
+          {{ permiso}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-content class="flex flex-col editar-form" *ngIf="this.opcionesPermisos['esEditar']">
+    <div class="'w-full'">
+      <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <td mat-cell *matCellDef="let element; let i = index"> {{i + 1}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Descripcion">
+          <th mat-header-cell *matHeaderCellDef class="text-center">
+            Descripcion
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-center"> {{element.permisos}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Opciones">
+          <th mat-header-cell *matHeaderCellDef class="text-center">
+            <button mat-fab color="primary" matTooltip="Agregar" (click)="mostrar = !mostrar"
+              style="height: 2rem !important; width: 2rem !important;">
+              <mat-icon>add</mat-icon>
+            </button>
+          </th>
+          <td mat-cell *matCellDef="let element; let i = index;" class="text-center">
+
+            <button mat-fab color="primary" *ngIf="!element['loading']" (click)="eliminarPermiso(element,i)"
+              style="height: 2rem !important; width: 2rem !important;">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <mat-spinner *ngIf="element['loading']" diameter="30"></mat-spinner>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+    <mat-divider class="text-border"></mat-divider>
+    <div *ngIf="mostrar" class="w-6/12 formulario">
+      <mat-form-field class="flex-auto input">
+        <mat-label>
+          Modulos
+        </mat-label>
+        <mat-select formControlName="modulos" required>
+          <mat-option *ngFor="let modulo of modulos" [value]="modulo['descripcion']" (click)="selectModulo(modulo)">
+            {{ modulo['descripcion'] }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="flex-auto input">
+        <mat-label>
+          Opciones
+        </mat-label>
+        <mat-select formControlName="opciones" required>
+          <mat-option *ngFor="let opt of opciones" [value]="opt['descripcion']" (click)="selectOpt(opt)">
+            {{ opt['descripcion'] }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="flex-auto input">
+        <mat-label>
+          Permisos
+        </mat-label>
+        <mat-select formControlName="permisos" required>
+          <mat-option *ngFor="let permiso of permisos" [value]="permiso">
+            {{ permiso}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="botones">
+        <button mat-raised-button (click)="limpiar()">
+          <mat-icon class="ltr:mr-2 rtl:ml-2 icon-sm">close</mat-icon>
+          <span>Cancelar</span>
+        </button>
+        <button mat-raised-button color="primary" (click)="crearPermisos()">
+          <mat-icon class="ltr:mr-2 rtl:ml-2 icon-sm">add</mat-icon>
+          <span>Agregar</span>
+        </button>
+      </div>
+
+    </div>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" *ngIf="!this.opcionesPermisos['esEditar']">
+    <button mat-button mat-dialog-close type="button">Salir</button>
+    <button color="primary" mat-flat-button type="submit" [disabled]="!form.valid || procesando"
+      (click)="this.opcionesPermisos['esEditar'] ?actualizarPermisos():crearPermisos()">
+      {{ procesando ? 'Procesando...' : this.opcionesPermisos['esEditar'] ? 'Actualizar' : 'Crear' }}
+    </button>
+  </mat-dialog-actions>
+</form>

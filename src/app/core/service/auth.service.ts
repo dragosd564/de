@@ -10,7 +10,7 @@ import { AlertasService } from './alertas.service';
 })
 export class AuthService {
 
-  url = 'https://localhost:44364'
+  url = 'http://209.151.154.226/api/auth'
 
   constructor(
     private http: HttpClient,

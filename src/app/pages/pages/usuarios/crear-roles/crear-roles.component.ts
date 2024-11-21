@@ -12,8 +12,8 @@ import { AlertasService } from 'src/app/core/service/alertas.service';
   standalone: true,
   imports: [AngularMaterialModule],
   templateUrl: './crear-roles.component.html',
+  styleUrl: './crear-roles.component.scss',
   changeDetection: ChangeDetectionStrategy.Default,
-  styleUrl: './crear-roles.component.scss'
 })
 export class CrearRolesComponent implements OnInit, OnChanges {
 
@@ -38,8 +38,6 @@ export class CrearRolesComponent implements OnInit, OnChanges {
     private usuariosService: UsuariosService,
     private alertasService: AlertasService,
     private fb: FormBuilder) {
-    console.log(this.form.value);
-
   }
 
 

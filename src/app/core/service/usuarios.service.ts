@@ -7,7 +7,7 @@ import { map, Observable } from 'rxjs';
 })
 export class UsuariosService {
 
-  url = 'https://localhost:44364'
+  url = 'http://209.151.154.226/api/auth'
 
   constructor(private http: HttpClient,) { }
 
@@ -55,5 +55,20 @@ export class UsuariosService {
     return this.http.delete(this.url + `/roles/borrar/${idRol}`)
   }
 
+  getModulo(): Observable<any> {
+    return this.http.get(this.url + '/module');
+  }
+
+  getOpciones(idModulo: any): Observable<any> {
+    return this.http.get(this.url + `/option/${idModulo}`);
+  }
+
+  crearPermisos(id: any, permiso: any) {
+    return this.http.post(this.url + `/roles/${id}/detail`, permiso);
+  }
+
+  deletePermiso(id: any) {
+    return this.http.delete(this.url + `/roles/detail/${id}`)
+  }
 
 }

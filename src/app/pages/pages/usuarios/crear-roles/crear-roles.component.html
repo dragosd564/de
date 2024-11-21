@@ -33,17 +33,7 @@
       </mat-form-field>
 
     </div>
-    <!-- <mat-form-field class="flex-auto">
-      <mat-label>
-        Tipo de Perfil
-      </mat-label>
-      <mat-select formControlName="tipoPerfil" required>
-        <mat-option *ngFor="let perfil of tiposPerfiles" [value]="perfil['descripcion']"
-          (click)="seleccionarTipoPerfil(perfil)">
-          {{ perfil['descripcion'] }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field> -->
+
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
@@ -52,9 +42,5 @@
       (click)="rol ?actualizar():crear()">
       {{ procesando ? 'Procesando...' : rol ? 'Actualizar' : 'Crear' }}
     </button>
-
-    <!-- <button *ngIf="isUpdateMode()" color="primary" mat-flat-button type="submit">
-      Update Customer
-    </button> -->
   </mat-dialog-actions>
 </form>

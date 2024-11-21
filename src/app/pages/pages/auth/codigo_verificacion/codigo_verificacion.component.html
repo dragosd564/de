@@ -29,6 +29,32 @@
         </button>
       </form>
     </div>
+    <mat-card class="example-card" *ngIf="codigo">
+      <mat-card-header>
+        <mat-card-subtitle>
+          <div class="flex items-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="text-yellow-500 mr-2" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Código de Verificación Temporal</h3>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-divider></mat-divider>
+        <p>{{ codigo }}</p>
+        <mat-divider></mat-divider>
+        <p class="text-sm text-gray-500 dark:text-gray-400 italic text-left">
+          Nota:<br> En el futuro, este código será enviado a su correo electrónico.
+          Esta es una solución temporal.Con el fin de prueba.
+        </p>
+      </mat-card-content>
+
+    </mat-card>
 
 
   </div>

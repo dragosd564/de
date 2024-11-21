@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
 import { fadeInUp400ms } from '@vex/animations/fade-in-up.animation';
 import { AlertasService } from 'src/app/core/service/alertas.service';
 import { AuthService } from 'src/app/core/service/auth.service';
+import { SharedDataService } from 'src/app/core/service/shared-data.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -33,12 +35,17 @@ import Swal from 'sweetalert2';
     MatCheckboxModule,
     MatSnackBarModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDividerModule,
+    NgIf,
   ]
 })
 export class Codigo_verificacionComponent implements OnInit {
 
   isLoading = false;
+
+  codigo: any;
+
   error = '';
 
   verificationForm = this.fb.group({
@@ -58,7 +65,8 @@ export class Codigo_verificacionComponent implements OnInit {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
-    private alertaService: AlertasService
+    private alertaService: AlertasService,
+    private sharedDataService: SharedDataService
   ) { }
 
   ngOnInit() {
@@ -66,6 +74,7 @@ export class Codigo_verificacionComponent implements OnInit {
       this.cd.markForCheck();
     });
     this.startResendTimer();
+    this.codigo = this.sharedDataService.getData();
   }
 
   send() {
@@ -119,6 +128,7 @@ export class Codigo_verificacionComponent implements OnInit {
         await this.authService.authEmail().subscribe((res: any) => {
           this.isLoading = false;
           if (res.success) {
+            this.codigo = res.result['codigo'];
             this.alertaService.alertaExito('Código reenviado', 'Se ha reenviado el código de verificación');
           }
         }, (err: any) => {

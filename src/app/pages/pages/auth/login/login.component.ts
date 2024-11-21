@@ -19,6 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from 'src/app/core/service/auth.service';
 import Swal from 'sweetalert2';
 import { AlertasService } from 'src/app/core/service/alertas.service';
+import { SharedDataService } from 'src/app/core/service/shared-data.service';
 
 @Component({
   selector: 'vex-login',
@@ -65,7 +66,8 @@ export class LoginComponent {
     private cd: ChangeDetectorRef,
     private snackbar: MatSnackBar,
     private authService: AuthService,
-    private alertasService: AlertasService
+    private alertasService: AlertasService,
+    private sharedDataService: SharedDataService,
   ) { }
 
   async handleLogin() {
@@ -102,6 +104,7 @@ export class LoginComponent {
     this.authService.authEmail().subscribe((res) => {
       this.isLoading = false;
       if (res.success) {
+        this.sharedDataService.setData(res.result['codigo']);
         this.alertasService.alertaExito('Código enviado', 'Hemos enviado un código de verificación a tu correo electrónico');
         this.router.navigate(['/codigo_verificacion']);
       }

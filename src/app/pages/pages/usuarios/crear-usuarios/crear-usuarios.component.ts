@@ -35,12 +35,12 @@ export class CrearUsuariosComponent implements OnInit {
     nombre: [this.usuario?.nombre || ''],
     apellido: [this.usuario?.apellido || ''],
     role: [this.usuario?.roles[0] || ''],
-    correo: [this.usuario?.inicioSesion || ''],
+    correo: [this.usuario?.correo || '', [Validators.required, Validators.email]],
     opciones: [this.usuario?.opciones || ''],
     telefono: [this.usuario?.telefono || ''],
     inicioSesion: [this.usuario?.inicioSesion || ''],
     clave: ['', [Validators.required, Validators.minLength(8)]],
-    idPerfil: [''],
+    idPerfil: ['', Validators.required],
     idLocal: [0],
     idEmpresa: [0],
   });
@@ -61,6 +61,7 @@ export class CrearUsuariosComponent implements OnInit {
     if (this.usuario) {
       this.mode = 'update';
       this.form.get('clave')?.clearValidators();
+      this.form.clearValidators();
     } else {
       this.usuario = {};
     }
@@ -113,15 +114,17 @@ export class CrearUsuariosComponent implements OnInit {
     if (this.form.valid && this.getPasswordStrength() === this.passwordRules.length) {
       this.isloading = true;
       const usuario = {
-        "inicioSesion": this.form.value.correo,
+        "inicioSesion": this.form.value.inicioSesion,
         "identificacion": "0000000000",
         "nombres": this.form.value.nombre,
+        "apellidos": this.form.value.apellido,
         "correo": this.form.value.correo,
         "celular": this.form.value.telefono,
         "foto": "",
         "clave": this.form.value.clave,
         "idPerfil": this.form.value.idPerfil,
       }
+
       this.usuariosService.crearUsuario(usuario).subscribe((data: any) => {
         this.isloading = false;
         this.alertasService.alertaExito('Usuario creado', 'El usuario se ha creado correctamente');
@@ -139,9 +142,11 @@ export class CrearUsuariosComponent implements OnInit {
       "identificacion": "",
       "ruc": "",
       "nombre": this.form.value.nombre,
+      "apellido": this.form.value.apellido,
       "correo": this.form.value.correo,
       "telefono": this.form.value.telefono,
-      "foto": ""
+      "foto": "",
+      "idPerfil": this.form.value.idPerfil,
     }
     this.usuariosService.updateUsuario(this.usuario.idUsuario, usuario).subscribe((data: any) => {
       this.isloading = false;

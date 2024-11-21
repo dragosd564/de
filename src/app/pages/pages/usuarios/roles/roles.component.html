@@ -27,8 +27,113 @@
         </div>
 
         <div class="card h-full overflow-hidden flex-auto">
-          <vex-tabla-dinamica [data]="roles" [columns]="columns" [loading]="isloading"
-            (openData)="recibeData($event)"></vex-tabla-dinamica>
+          <div class="tabla-contenedor">
+            <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+              <!-- Columna: Rol -->
+              <ng-container matColumnDef="rol">
+                <th mat-header-cell *matHeaderCellDef> Rol </th>
+                <td mat-cell *matCellDef="let element"> {{ element.descripcion }} </td>
+              </ng-container>
+              <!--  -->
+              <ng-container matColumnDef="expand">
+                <th mat-header-cell *matHeaderCellDef aria-label="row actions" class="text-center">
+                  Opciones y Permisos
+                </th>
+                <td mat-cell *matCellDef="let element" class="text-center">
+                  <button mat-icon-button aria-label="expand row" matTooltip="Ver opciones y permisos"
+                    (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                    @if (expandedElement === element) {
+                    <mat-icon>keyboard_arrow_up</mat-icon>
+                    } @else {
+                    <mat-icon>keyboard_arrow_down</mat-icon>
+                    }
+                  </button>
+                </td>
+              </ng-container>
+
+              <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                  <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+                    class="example-element-detail">
+                    <div class="container headerExpanded">
+                      <h4>
+                        <strong>Opciones y Permisos asignados</strong>
+                      </h4>
+                      <button mat-raised-button color="primary" (click)="crearPrermisos(element)">
+                        <mat-icon class="ltr:mr-2 rtl:ml-2 icon-sm">add</mat-icon>
+                        <span>Agregar</span>
+                      </button>
+                    </div>
+                    <h4 *ngIf="element.detallePerfil.length == 0" class="p-4">
+                      <strong>Este rol no tiene opciones ni permisos asignados</strong>
+                    </h4>
+                    <div class="opciones p-4">
+                      <mat-card class="card-opciones" *ngFor="let detalle of element.detallePerfil">
+                        <mat-card-header>
+                          <div mat-card-avatar>
+                            <mat-icon>settings</mat-icon>
+                          </div>
+                          <mat-card-title>
+                            <h5><strong>Opcion</strong></h5>
+                          </mat-card-title>
+                          <mat-card-subtitle><strong>{{ detalle.opcion | uppercase}}</strong></mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                          <p>
+                            <strong>Permisos</strong>
+                          </p>
+                          <div (click)="$event.stopPropagation()" class="flex items-center gap-1">
+                            <div *ngFor="let permisos of detalle.permisos" [ngClass]="[permisos]"
+                              class="rounded px-2 py-1 font-medium text-xs flex-none">
+                              {{ permisos }}
+                            </div>
+                          </div>
+                          <br>
+                          <mat-divider></mat-divider>
+                        </mat-card-content>
+                        <mat-divider></mat-divider>
+                        <mat-card-actions style="gap: 2rem !important;">
+                          <button mat-raised-button color="primary" (click)="editarPermisos(detalle)">
+                            <mat-icon class="ltr:mr-2 rtl:ml-2 icon-sm">edit</mat-icon>
+                            <span>Editar Permisos</span>
+                          </button>
+                        </mat-card-actions>
+
+                      </mat-card>
+
+                    </div>
+                    <br>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+              <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
+                [class.example-expanded-row]="expandedElement === element">
+              </tr>
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+
+            <div *ngIf="dataSource.data.length === 0 && !isloading" @scaleFadeIn
+              class="flex-auto flex flex-col items-center justify-center">
+              <img class="m-12 h-64" src="assets/img/illustrations/idea.svg" />
+              <h2 class="headline m-0 text-center">
+                No se han encontrado roles
+              </h2>
+            </div>
+
+            <mat-progress-bar *ngIf="isloading" mode="indeterminate"
+              class="sticky top-0 left-0 right-0"></mat-progress-bar>
+
+            <mat-paginator [class.hidden]="dataSource.data.length === 0" [length]="dataSource.data.length"
+              [hidePageSize]="true" [pageSize]="10"
+              class="sticky bottom-0 left-0 right-0 border-t flex-none"></mat-paginator>
+
+          </div>
+
+          <!-- <vex-tabla-dinamica [data]="roles" [columns]="columns" [loading]="isloading"
+            (openData)="recibeData($event)"></vex-tabla-dinamica> -->
         </div>
       </mat-drawer-content>
     </mat-drawer-container>
