@@ -76,21 +76,17 @@ export class LoginComponent {
       this.error = '';
 
       try {
-        // Simulate API call
         await this.authService.login(this.form.value).subscribe((res) => {
+          this.isLoading = false;
           if (res.success) {
             this.isLoading = false;
             localStorage.setItem('token', res.result.token);
             this.mandarCodigo();
-
-
-          } else {
-            this.isLoading = false;
-            this.error = res.message;
           }
         }, (error) => {
           this.isLoading = false;
-          this.error = error.message || 'Error al iniciar sesión';
+          this.error = error.error.message || 'Error al iniciar sesión';
+          this.alertasService.alertaError('Alerta', this.error)
         });
       } catch (err) {
         this.isLoading = false;

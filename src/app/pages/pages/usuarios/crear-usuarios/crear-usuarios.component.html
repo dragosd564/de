@@ -24,8 +24,10 @@
           Nombres
         </mat-label>
         <input cdkFocusInitial formControlName="nombre" matInput />
-
         <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+        <mat-error *ngIf="form.get('nombre')?.hasError('required')">
+          Los nombres son requerido
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="sm:ml-6 flex-auto">
@@ -35,6 +37,9 @@
         <input formControlName="apellido" matInput />
 
         <mat-icon matIconPrefix svgIcon="mat:person"></mat-icon>
+        <mat-error *ngIf="form.get('apellido')?.hasError('required')">
+          Los Apellidos son requerido
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -43,17 +48,24 @@
         Inicio de sesión / Alias
       </mat-label>
       <input formControlName="inicioSesion" matInput />
-
       <mat-icon matIconPrefix>person</mat-icon>
+
     </mat-form-field>
     <mat-form-field class="flex-auto">
-      <mat-label>
-        Email
-      </mat-label>
+      <mat-label>Email</mat-label>
       <input formControlName="correo" matInput />
-
       <mat-icon matIconPrefix svgIcon="mat:email"></mat-icon>
+      <mat-error *ngIf="form.get('correo')?.hasError('required')">
+        El correo es obligatorio.
+      </mat-error>
+      <mat-error *ngIf="form.get('correo')?.hasError('email')">
+        El correo no es válido.
+      </mat-error>
+      <mat-error *ngIf="form.get('correo')?.hasError('dominioInvalido')">
+        El dominio del correo no es válido. Usa un dominio permitido.
+      </mat-error>
     </mat-form-field>
+
 
     <mat-form-field class="flex-auto">
       <mat-label>

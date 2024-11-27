@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Usuario } from 'src/app/core/interfaces/customer.model';
 import { AlertasService } from 'src/app/core/service/alertas.service';
@@ -32,10 +32,13 @@ export class CrearUsuariosComponent implements OnInit {
 
   form = this.fb.group({
     id: [this.usuario?.idUsuario || ''],
-    nombre: [this.usuario?.nombre || ''],
-    apellido: [this.usuario?.apellido || ''],
-    role: [this.usuario?.roles[0] || ''],
-    correo: [this.usuario?.correo || '', [Validators.required, Validators.email]],
+    nombre: [this.usuario?.nombre || '', [Validators.required]],
+    apellido: [this.usuario?.apellido || '', [Validators.required]],
+    role: [this.usuario?.roles[0] || '', [Validators.required]],
+    correo: [
+      this.usuario?.correo,
+      [Validators.required, Validators.email, dominioValido(['gmail.com', 'hotmail.com', 'yahoo.com'])]
+    ],
     opciones: [this.usuario?.opciones || ''],
     telefono: [this.usuario?.telefono || ''],
     inicioSesion: [this.usuario?.inicioSesion || ''],
@@ -175,4 +178,20 @@ export class CrearUsuariosComponent implements OnInit {
   selectRol(rol: any) {
     this.form.get('idPerfil')?.setValue(rol.idPerfil);
   }
+
+}
+
+function dominioValido(dominiosPermitidos: string[]): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const correo = control.value;
+    if (!correo) {
+      return null; // Campo vacío, no se valida aquí
+    }
+
+    const dominio = correo.split('@')[1];
+    if (dominio && dominiosPermitidos.includes(dominio.toLowerCase())) {
+      return null; // Dominio válido
+    }
+    return { dominioInvalido: true }; // Dominio inválido
+  };
 }

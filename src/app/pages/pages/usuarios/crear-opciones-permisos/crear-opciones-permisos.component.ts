@@ -18,6 +18,9 @@ import { MatTableDataSource } from '@angular/material/table';
 export class CrearOpcionesPermisosComponent implements OnInit, OnChanges {
   procesando = false
   mostrar = false;
+
+  titulo = 'Crear Opciones y permisos'
+
   form = this.fb.group({
     idModulo: [0],
     modulos: [''],
@@ -50,7 +53,7 @@ export class CrearOpcionesPermisosComponent implements OnInit, OnChanges {
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+
   }
 
   async ngOnInit() {
@@ -62,8 +65,13 @@ export class CrearOpcionesPermisosComponent implements OnInit, OnChanges {
         };
       });
       this.dataSource.data = this.permisosDetalle;
+      this.titulo = `Editar Opciones y permisos para ${this.opcionesPermisos['rol']['opcion']}`
+    } else {
+      this.titulo = `Crear Opciones y permisos`
     }
     this.obtenerModulo()
+    console.log(this.opcionesPermisos);
+
   }
 
   obtenerModulo() {

@@ -127,6 +127,7 @@ export class RolesComponent implements OnInit {
 
   editarPermisos(role: any) {
     this.dialog.open(CrearOpcionesPermisosComponent, {
+      width: '40rem',
       data: {
         esEditar: true,
         rol: role

@@ -21,3 +21,14 @@
 .input {
   width: 30rem !important;
 }
+
+.topBar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+.subtitulo {
+  font-size: 13px;
+  font-weight: 500;
+  padding-top: 10px;
+}
